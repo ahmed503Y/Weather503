@@ -67,7 +67,6 @@ data class DailyInfo(
         get() = weatherCode.map { getWeatherDescription(it) }
 }
 
-
 fun getWeatherDescription(code: Int): String {
     return when (code) {
         0 -> "Clear sky"

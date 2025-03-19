@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.PositionIndicator
@@ -29,9 +30,9 @@ import no.domain.weather.presentation.lib.WeatherInfo
 @Composable
 fun HourlyWeatherColumnView(
     data: WeatherInfo,
-    day: Int
+    day: Int,
+    navController: NavController
 ) {
-
     val scalingLazyListState = rememberScalingLazyListState()
 
     Scaffold (

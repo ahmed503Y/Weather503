@@ -1,6 +1,8 @@
 package no.domain.weather.presentation.UIComponent
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
@@ -24,44 +27,13 @@ import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import no.domain.weather.presentation.lib.Units
 import no.domain.weather.presentation.lib.WeatherInfo
+import androidx.navigation.NavController
 
 
 @Composable
-fun DailyWeatherColumnView(data: WeatherInfo, day: Int) {
-
-    val scalingLazyListState = rememberScalingLazyListState()
-
-    Scaffold (
-        positionIndicator = {
-            PositionIndicator(scalingLazyListState = scalingLazyListState)
-        }
-    ) {
-        ScalingLazyColumn (
-            state = scalingLazyListState,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            items(day) {
-                index ->
-                //var index: Int = index + (24 * day)
-                DailyWeatherCards(
-                    time = data.daily.time[index],
-                    weatherDescriptions = data.daily.weatherDescriptions[index],
-                    temperatureMax = data.daily.temperatureMax[index],
-                    temperatureMin = data.daily.temperatureMin[index],
-                    precipitationProbability = data.daily.precipitationProbability[index],
-                    units = data.units,
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-private fun DailyWeatherCards(
+fun DailyWeatherCards(
+    navController: NavController,
+    index: Int,
     time: String,
     weatherDescriptions: String,
     temperatureMax: Double,
@@ -69,7 +41,13 @@ private fun DailyWeatherCards(
     precipitationProbability: Double,
     units: Units
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .clickable(onClick = {
+                Log.e("ee", "navigating")
+                navController.navigate("HourlyCards/${index}")
+            })
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
