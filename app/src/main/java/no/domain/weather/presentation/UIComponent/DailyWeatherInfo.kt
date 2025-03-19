@@ -59,7 +59,7 @@ fun DailyWeatherCards(
                         bottomStart = 20.dp,
                     )
                 )
-                .background(Color.Red)
+                .background(color = Color.Red)
                 .height(60.dp)
         ) {
             Text(

@@ -26,6 +26,20 @@ import androidx.wear.compose.material.Text
 import no.domain.weather.presentation.lib.Units
 import no.domain.weather.presentation.lib.WeatherInfo
 
+import android.R
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.res.colorResource
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 
 @Composable
 fun HourlyWeatherColumnView(
@@ -34,6 +48,13 @@ fun HourlyWeatherColumnView(
     navController: NavController
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
+
+    val scope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold (
         positionIndicator = {
@@ -46,6 +67,14 @@ fun HourlyWeatherColumnView(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
+                .onRotaryScrollEvent {
+                    scope.launch {
+                        scalingLazyListState.scrollBy(it.verticalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
         ) {
             items(24) { index ->
                 var index: Int = index + (24 * day)
@@ -84,8 +113,8 @@ private fun HourlyWeatherCards(
                         bottomStart = 20.dp,
                     )
                 )
-                .background(Color.Red)
                 .height(60.dp)
+                .background(color = Color.Red)
         ) {
             Text(
                 text = formatTime(time),

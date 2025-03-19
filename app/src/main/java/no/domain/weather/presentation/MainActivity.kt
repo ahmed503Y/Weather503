@@ -20,6 +20,8 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
@@ -163,6 +169,12 @@ private fun CurrentAndDailyCards(
 ) {
 
     val scalingLazyListState = rememberScalingLazyListState()
+    val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold (
         positionIndicator = {
@@ -175,6 +187,14 @@ private fun CurrentAndDailyCards(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
+                .onRotaryScrollEvent{
+                    scope.launch {
+                        scalingLazyListState.scrollBy(it.verticalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
         ) {
             item {
                 Column {
