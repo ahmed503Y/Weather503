@@ -1,33 +1,38 @@
 package no.domain.weather.presentation.UIComponent
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+
 import androidx.compose.foundation.shape.RoundedCornerShape
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.WbSunny
+
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.sp
+
 import androidx.wear.compose.material.Text
-import no.domain.weather.presentation.lib.Units
-import no.domain.weather.presentation.lib.WeatherInfo
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Icon
+
 import androidx.navigation.NavController
+
+import no.domain.weather.presentation.lib.Units
 
 
 @Composable
@@ -44,7 +49,6 @@ fun DailyWeatherCards(
     Column(
         modifier = Modifier
             .clickable(onClick = {
-                Log.e("ee", "navigating")
                 navController.navigate("HourlyCards/${index}")
             })
     ) {
@@ -59,51 +63,110 @@ fun DailyWeatherCards(
                         bottomStart = 20.dp,
                     )
                 )
-                .background(color = Color.Red)
+                .background(color = MaterialTheme.colors.surface)
                 .height(60.dp)
         ) {
             Text(
                 text = time,
+                fontSize = 20.sp,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
             )
-            Text(
-                text = weatherDescriptions,
+
+            Row(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
                     .padding(
-                        vertical = 15.dp,
-                        horizontal = 7.dp
+                        top = 20.dp,
+                        start = 5.dp
                     )
-            )
-            Text(
-                text = "${ temperatureMax }${ units.temperature }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Album,
+                    contentDescription = "Weather",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = weatherDescriptions
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(
-                        vertical = 10.dp,
-                        horizontal = 7.dp
+                        bottom = 5.dp,
+                        start = 5.dp
                     )
-            )
-            Text(
-                text = "${ precipitationProbability }${ units.precipitationProbability }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Temperature Max",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = "${ temperatureMax }${ units.temperature }"
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(
-                        vertical = 15.dp,
-                        horizontal = 7.dp
+                        top = 20.dp,
+                        end = 5.dp
                     )
-            )
-            Text(
-                text = "${ temperatureMin }${ units.temperature }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Cloud,
+                    contentDescription = "Precipitation Probability",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = "${ precipitationProbability }${ units.precipitationProbability }"
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
-                        vertical = 9.dp,
-                        horizontal = 7.dp
+                        bottom = 5.dp,
+                        end = 5.dp
                     )
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Temperature Min",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
 
+                Text(
+                    text = "${ temperatureMin }${ units.temperature }"
+                )
+            }
         }
         Spacer(
             modifier = Modifier

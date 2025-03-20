@@ -1,8 +1,3 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter to find the
- * most up to date changes to the libraries and their usages.
- */
-
 package no.domain.weather.presentation
 
 import android.R
@@ -12,56 +7,40 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.tooling.preview.devices.WearDevices
-
-
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.wear.compose.material.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.NavType
-import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 
-
 import kotlinx.coroutines.*
 import kotlin.getValue
+
 import no.domain.weather.presentation.UIComponent.ApiCallHandler
 import no.domain.weather.presentation.UIComponent.CurrentWeatherCard
 import no.domain.weather.presentation.UIComponent.DailyWeatherCards
@@ -90,10 +69,9 @@ class MainActivity : ComponentActivity() {
 fun MainApp(apiHandler: ApiCallHandler) {
     val isLoading by apiHandler.isLoading.collectAsState()
     val data by apiHandler.data.collectAsState()
-    val scope = rememberCoroutineScope()
 
-    var show by remember {
-        mutableStateOf(true)
+    LaunchedEffect(Unit) {
+        apiHandler.callApi()
     }
 
     Column(
@@ -101,16 +79,6 @@ fun MainApp(apiHandler: ApiCallHandler) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        if (show) {
-            Button(onClick = {
-                scope.launch {
-                    show = false
-                    apiHandler.callApi()
-                }
-            }) {
-                Text(text = "Data")
-            }
-        }
         if (isLoading) {
             CircularProgressIndicator()
         } else {
@@ -147,12 +115,10 @@ fun Navigation(
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { id ->
             val idValue = id.arguments?.getInt("id")
-            Log.e("ee", "$idValue")
             idValue?.let {
                 HourlyWeatherColumnView(
                     data = data,
-                    day = idValue,
-                    navController = navController
+                    day = idValue
                 )
             }
         }
@@ -201,10 +167,9 @@ private fun CurrentAndDailyCards(
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .size(30.dp)
+                            .size(50.dp)
                     )
                     CurrentWeatherCard(
-                        time = data.current.time,
                         weatherDescriptions = data.current.weatherDescriptions,
                         temperature = data.current.temperature,
                         isDay = data.current.isDay,
@@ -234,13 +199,3 @@ private fun CurrentAndDailyCards(
         }
     }
 }
-
-
-/*
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-
-}
-
- */

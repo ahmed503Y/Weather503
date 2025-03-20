@@ -11,41 +11,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.WbSunny
+
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.unit.sp
+
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
+
+import kotlinx.coroutines.launch
+
 import no.domain.weather.presentation.lib.Units
 import no.domain.weather.presentation.lib.WeatherInfo
-
-import android.R
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
-import androidx.compose.ui.res.colorResource
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
-import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 
 @Composable
 fun HourlyWeatherColumnView(
     data: WeatherInfo,
-    day: Int,
-    navController: NavController
+    day: Int
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
 
@@ -76,6 +81,13 @@ fun HourlyWeatherColumnView(
                 .focusRequester(focusRequester)
                 .focusable()
         ) {
+            item {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(30.dp)
+                )
+            }
             items(24) { index ->
                 var index: Int = index + (24 * day)
                 HourlyWeatherCards(
@@ -114,50 +126,109 @@ private fun HourlyWeatherCards(
                     )
                 )
                 .height(60.dp)
-                .background(color = Color.Red)
+                .background(color = MaterialTheme.colors.surface )
         ) {
             Text(
                 text = formatTime(time),
+                fontSize = 20.sp,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
             )
-            Text(
-                text = weatherDescriptions,
+
+            Row(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
                     .padding(
-                        vertical = 15.dp,
-                        horizontal = 7.dp
+                        top = 20.dp,
+                        start = 5.dp
                     )
-            )
-            Text(
-                text = "${ temperature }${ units.temperature }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Album,
+                    contentDescription = "Weather",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = weatherDescriptions
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(
-                        vertical = 10.dp,
-                        horizontal = 7.dp
+                        bottom = 5.dp,
+                        start = 5.dp
                     )
-            )
-            Text(
-                text = "${ precipitationProbability }${ units.precipitationProbability }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Temperature",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = "${ temperature }${ units.temperature }"
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(
-                        vertical = 15.dp,
-                        horizontal = 7.dp
+                        top = 20.dp,
+                        end = 5.dp
                     )
-            )
-            Text(
-                text = "${ humidity }${ units.precipitationProbability }",
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Cloud,
+                    contentDescription = "Precipitation Probability",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
+
+                Text(
+                    text = "${ precipitationProbability }${ units.precipitationProbability }"
+                )
+            }
+
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
-                        vertical = 9.dp,
-                        horizontal = 7.dp
+                        bottom = 5.dp,
+                        end = 5.dp
                     )
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = "Humidity",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .padding(
+                            top = 5.dp
+                        )
+                )
 
+                Text(
+                    text = "${ humidity }${ units.precipitationProbability }"
+                )
+            }
         }
         Spacer(
             modifier = Modifier
