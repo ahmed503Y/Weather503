@@ -28,6 +28,7 @@ suspend fun ktorCall(latitude: Double, longitude: Double, days: Int): WeatherInf
     return try {
         client.use {
             val response = it.get(url).body<WeatherInfo>()
+            Log.e("ktorCall", "Got Data")
             response
         }
     } catch (e: ClientRequestException) {

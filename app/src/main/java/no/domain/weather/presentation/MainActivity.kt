@@ -43,6 +43,7 @@ import kotlin.getValue
 
 import no.domain.weather.presentation.UIComponent.ApiCallHandler
 import no.domain.weather.presentation.UIComponent.CurrentWeatherCard
+import no.domain.weather.presentation.UIComponent.CurrentWeatherCardNoInfo
 import no.domain.weather.presentation.UIComponent.DailyWeatherCards
 import no.domain.weather.presentation.UIComponent.HourlyWeatherColumnView
 import no.domain.weather.presentation.lib.WeatherInfo
@@ -64,11 +65,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun MainApp(apiHandler: ApiCallHandler) {
     val isLoading by apiHandler.isLoading.collectAsState()
     val data by apiHandler.data.collectAsState()
+    var isDataFromStorage = apiHandler.isDataFromStorage.collectAsState()
 
     LaunchedEffect(Unit) {
         apiHandler.callApi()
@@ -85,7 +86,8 @@ fun MainApp(apiHandler: ApiCallHandler) {
             data?.let {
                 Navigation(
                     data = it,
-                    day = 3
+                    day = 3,
+                    isDataFromStorage = isDataFromStorage.value
                 )
             }
         }
@@ -96,7 +98,8 @@ fun MainApp(apiHandler: ApiCallHandler) {
 @Composable
 fun Navigation(
     data: WeatherInfo,
-    day: Int
+    day: Int,
+    isDataFromStorage: Boolean
 ) {
     val navController = rememberNavController()
 
@@ -107,7 +110,8 @@ fun Navigation(
         composable("MainMenu") { CurrentAndDailyCards(
             data = data,
             day = day,
-            navController = navController
+            navController = navController,
+            isDataFromStorage = isDataFromStorage
         ) }
 
         composable(
@@ -131,7 +135,8 @@ fun Navigation(
 private fun CurrentAndDailyCards(
     data: WeatherInfo,
     day: Int,
-    navController: NavController
+    navController: NavController,
+    isDataFromStorage: Boolean
 ) {
 
     val scalingLazyListState = rememberScalingLazyListState()
@@ -153,7 +158,7 @@ private fun CurrentAndDailyCards(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .onRotaryScrollEvent{
+                .onRotaryScrollEvent {
                     scope.launch {
                         scalingLazyListState.scrollBy(it.verticalScrollPixels)
                     }
@@ -169,13 +174,19 @@ private fun CurrentAndDailyCards(
                             .fillMaxWidth()
                             .size(50.dp)
                     )
-                    CurrentWeatherCard(
-                        weatherDescriptions = data.current.weatherDescriptions,
-                        temperature = data.current.temperature,
-                        isDay = data.current.isDay,
-                        humidity = data.current.humidity,
-                        units = data.units
-                    )
+
+                    if (isDataFromStorage) {
+                        CurrentWeatherCardNoInfo()
+                    } else {
+                        CurrentWeatherCard(
+                            weatherDescriptions = data.current.weatherDescriptions,
+                            temperature = data.current.temperature,
+                            isDay = data.current.isDay,
+                            humidity = data.current.humidity,
+                            units = data.units
+                        )
+                    }
+
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.runtime.Composable
 
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,7 @@ import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.ui.Alignment
 
 import no.domain.weather.presentation.lib.Units
 
@@ -153,5 +153,33 @@ fun CurrentWeatherCard(
                 text = "${ humidity }${ units.precipitationProbability }"
             )
         }
+    }
+}
+
+
+@Composable
+fun CurrentWeatherCardNoInfo() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                    bottomEnd = 20.dp,
+                    bottomStart = 20.dp,
+                )
+            )
+            .background(color = MaterialTheme.colors.error)
+            .height(80.dp)
+        ) {
+
+        Text(
+            text = "Could Not Fetch Data\nLoading From Storage\nData May Be OutDated",
+            modifier = Modifier
+                .align(
+                    alignment = Alignment.Center
+                )
+        )
     }
 }
