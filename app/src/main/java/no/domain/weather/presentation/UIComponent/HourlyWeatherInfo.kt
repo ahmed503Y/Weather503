@@ -1,6 +1,7 @@
 package no.domain.weather.presentation.UIComponent
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Cloud
@@ -154,7 +156,10 @@ private fun HourlyWeatherCards(
                 )
 
                 Text(
-                    text = weatherDescriptions
+                    text = weatherDescriptions,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .basicMarquee()
                 )
             }
 

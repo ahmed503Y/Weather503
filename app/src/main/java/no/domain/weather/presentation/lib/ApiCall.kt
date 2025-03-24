@@ -16,8 +16,17 @@ import io.ktor.client.plugins.*
 * @longitude the longitude for the location
  *@days the number of days to get the data the maximum is 16
  **/
-suspend fun ktorCall(latitude: Double, longitude: Double, days: Int): WeatherInfo? {
-    val url = "https://api.open-meteo.com/v1/forecast?latitude=${ latitude }&longitude=${ longitude }&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=temperature_2m,relative_humidity_2m,weather_code,precipitation_probability&current=temperature_2m,is_day,weather_code,relative_humidity_2m&forecast_days=${ days }"
+suspend fun ktorCall(
+    latitude: Double,
+    longitude: Double,
+    days: Int,
+    useCelsius: Boolean
+): WeatherInfo? {
+    val url = if (useCelsius) {
+        "https://api.open-meteo.com/v1/forecast?latitude=${ latitude }&longitude=${ longitude }&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=temperature_2m,relative_humidity_2m,weather_code,precipitation_probability&current=temperature_2m,is_day,weather_code,relative_humidity_2m&forecast_days=${ days }&models=best_match"
+    } else {
+        "https://api.open-meteo.com/v1/forecast?latitude=${ latitude }&longitude=${ longitude }&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=temperature_2m,relative_humidity_2m,weather_code,precipitation_probability&current=temperature_2m,is_day,weather_code,relative_humidity_2m&forecast_days=${ days }&temperature_unit=fahrenheit&models=best_match"
+    }
 
     val client = HttpClient {
         install(ContentNegotiation) {
@@ -28,7 +37,6 @@ suspend fun ktorCall(latitude: Double, longitude: Double, days: Int): WeatherInf
     return try {
         client.use {
             val response = it.get(url).body<WeatherInfo>()
-            Log.e("ktorCall", "Got Data")
             response
         }
     } catch (e: ClientRequestException) {

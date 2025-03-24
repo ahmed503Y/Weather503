@@ -4,12 +4,14 @@ package no.domain.weather.presentation.UIComponent
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import no.domain.weather.presentation.lib.WeatherInfo
 import no.domain.weather.presentation.lib.ktorCall
 
@@ -23,29 +25,39 @@ class ApiCallHandler(application: Application): AndroidViewModel(application) {
 
     var isDataFromStorage = MutableStateFlow<Boolean>(false)
 
-    suspend fun callApi() {
-        _isLoading.value = true
+    fun callApi(
+        latitude: Double,
+        longitude: Double,
+        days: Int,
+        useCelsius: Boolean
+    ) {
 
-        _data.value = ktorCall(
-            latitude = 36.1833,
-            longitude = 44.0119,
-            days = 3
-        )
+        viewModelScope.launch {
 
-        if (_data.value != null) {
-            writeResponse(
-                context = getApplication<Application>().applicationContext,
-                weatherData = _data.value
+            _isLoading.value = true
+
+            _data.value = ktorCall(
+                latitude = latitude,
+                longitude = longitude,
+                days = days,
+                useCelsius = useCelsius
             )
-        } else {
-            isDataFromStorage.value = true
 
-            _data.value = readResponse(
-                context = getApplication<Application>().applicationContext
-            )
+            if (_data.value != null) {
+                writeResponse(
+                    context = getApplication<Application>().applicationContext,
+                    weatherData = _data.value
+                )
+            } else {
+                isDataFromStorage.value = true
+
+                _data.value = readResponse(
+                    context = getApplication<Application>().applicationContext
+                )
+            }
+
+            _isLoading.value = false
         }
-
-        _isLoading.value = false
     }
 }
 

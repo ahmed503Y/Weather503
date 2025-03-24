@@ -1,6 +1,7 @@
 package no.domain.weather.presentation.UIComponent
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 
@@ -92,7 +94,10 @@ fun DailyWeatherCards(
                 )
 
                 Text(
-                    text = weatherDescriptions
+                    text = weatherDescriptions,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .basicMarquee()
                 )
             }
 
